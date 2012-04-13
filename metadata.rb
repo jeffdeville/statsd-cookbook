@@ -7,6 +7,6 @@ version          "0.0.3"
 
 depends "build-essential"
 depends "git"
-depends "nodejs", ">= 0.5.2"
+depends "nodejs", ">= 0.6.15"
 
 supports "ubuntu"

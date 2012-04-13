@@ -5,13 +5,18 @@
 # Copyright 2011, Librato, Inc.
 #
 
-include_recipe "nodejs"
+include_recipe "node"
 include_recipe "git"
 
 execute "checkout_statsd" do
   command "git clone #{node[:statsd][:repo]} statsd"
   creates "/usr/share/statsd"
   cwd "/usr/share"
+end
+
+execute "install npm dependencies" do
+  command "npm install"
+  cwd "/usr/share/statsd"
 end
 
 directory "/etc/statsd" do
@@ -23,7 +28,10 @@ template "/etc/statsd/config.js" do
   mode 0644
   variables(:port => node[:statsd][:port],
             :graphitePort => node[:statsd][:graphite_port],
-            :graphiteHost => node[:statsd][:graphite_host]
+            :graphiteHost => node[:statsd][:graphite_host],
+            :libratoUser => node[:statsd][:librato_email],
+            :libratoApiKey => node[:statsd][:librato_api_token],
+            :librato_source => node[:statsd][:librato_source]
             )
 
   notifies :restart, "service[statsd]"
